@@ -26,21 +26,6 @@ class ViewController: UIViewController {
         (1...ViewModel.Constants.totalNumberOfEquations).map { _ in SimpleEquation() }
     }
     
-    var numberOfEquations: Int { viewModel?.count ?? 0 }
-    var correctAnswers: Int { viewModel?.correctAnswers ?? 0 }
-    var wrongAnswers: Int { (viewModel?.currentIndex ?? 1) - correctAnswers }
-    var report: String { "\(correctAnswers) Correct - \(wrongAnswers) Wrong" }
-    var stars: String {
-        guard numberOfEquations != 0 else { return "" }
-        
-        var starString = ""
-        let twoStarRating: CGFloat = CGFloat(correctAnswers) / CGFloat(numberOfEquations) * 10.0
-        starString = twoStarRating > 0 ? starString + "⭐️" : starString
-        starString = twoStarRating >= 7 ? starString + "⭐️" : starString
-        starString = twoStarRating >= 9 ? starString + "⭐️" : starString
-        return starString
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -94,8 +79,10 @@ extension ViewController {
     }
     
     private func showAlert() {
-        let alert = UIAlertController(title: "📝 Reults",
-                                      message: report + "\n" + stars,
+        guard let viewModel else { return }
+        
+        let alert = UIAlertController(title: "📝 Results",
+                                      message: viewModel.endGameMessage,
                                       preferredStyle: .alert)
         
         let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
@@ -108,10 +95,11 @@ extension ViewController {
     }
     
     private func showResult(equation: SimpleEquation, isCorrect: Bool) {
+        guard let viewModel else { return }
+        
         let title = (isCorrect ? " Correct" : "Wrong") + " Answer"
-        let message = isCorrect ? report + "\n🎉🎊🍾💙❤️💚" : report + "\n🚨🚔🤦‍♂️💔❤️‍🔥❤️‍🩹"
         let alert = UIAlertController(title: title,
-                                      message: message,
+                                      message: viewModel.report,
                                       preferredStyle: .actionSheet)
         
         let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in

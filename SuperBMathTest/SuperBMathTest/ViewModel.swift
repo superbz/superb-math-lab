@@ -21,6 +21,20 @@ class ViewModel {
     var currentIndex: Int = 0
     var correctAnswers: Int = 0
     
+    var wrongAnswers: Int { currentIndex - correctAnswers }
+    var report: String { "\(correctAnswers) Correct - \(wrongAnswers) Wrong" }
+    var stars: String {
+        guard numberOfEquations != 0 else { return "" }
+        
+        var starString = ""
+        let twoStarRating: CGFloat = CGFloat(correctAnswers) / CGFloat(numberOfEquations) * 10.0
+        starString = twoStarRating > 0 ? starString + "⭐️" : starString
+        starString = twoStarRating >= 7 ? starString + "⭐️" : starString
+        starString = twoStarRating >= 9 ? starString + "⭐️" : starString
+        return starString
+    }
+    var endGameMessage: String { report + "\n" + stars }
+    
     init(equations: [SimpleEquation]) {
         self.equations = equations
         print(equations)
